@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [name, setName] = useState();
-  const [age, setAge] = useState();
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
   const [data, setData] = useState([]);
+
   const createData = async () => {
     try {
       const response = await fetch("http://localhost:3000/", {
@@ -17,36 +18,49 @@ export default function Home() {
       const newData = await response.json();
       setData(newData);
     } catch (error) {
-      console.error("Errorr:", error);
+      console.error("Error:", error);
     }
   };
-  console.log(data);
+
   const addData = async () => {
     await createData();
+    setName("");
+    setAge("");
   };
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+
+  useEffect(() => {
+    createData();
+  }, []);
+
   return (
     <>
-      <div>
-        <p>Heloo</p>
+      <div className="flex justify-center gap-[120px]">
         <input
+          value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="name"
-        ></input>
-        <input
-          onChange={(event) => setAge(event.target.value)}
-          placeholder="age"
-        ></input>
-        <button onClick={() => addData()}>submit</button>
-      </div>
-      {data?.map((el, index) => (
-        <div key={index} className="">
-          <div className="">{el.name}</div>
-          <div>{el.age}</div>
+        />
+        <div>
+          <input
+            value={age}
+            onChange={(event) => setAge(event.target.value)}
+            placeholder="age"
+          />
+          <button className="bg-green-200" onClick={addData}>
+            submit
+          </button>
         </div>
-      ))}
+      </div>
+      <div className="w-[50%] border-[2px] rounded-[8px]">
+        <div className=" flex justify-center flex-col">
+          {data?.map((el, index) => (
+            <div key={index} className="flex gap-[100px] ">
+              <div>{el.name}</div>
+              <div>{el.age}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 }

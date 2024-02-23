@@ -13,11 +13,12 @@ app.get("/", (request, response) => {
 });
 
 app.post("/", (request, response) => {
+  let arr = request.body;
+  fs.writeFileSync("db.json", arr);
   fs.readFileSync("db.json");
+  arr = JSON.parse("db.json");
   arr.push(request.body);
-  fs.writeFileSync("db.json", JSON.stringify(arr));
-  // arr = JSON.parse("db.json");
-  console.log(arr + "sd");
+  console.log(arr);
   response.send(arr);
 });
 
