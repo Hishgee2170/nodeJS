@@ -17,7 +17,7 @@ app.post("/", (request, response) => {
   arr.push(request.body);
   fs.writeFileSync("db.json", JSON.stringify(arr));
   // arr = JSON.parse("db.json");
-  console.log(arr);
+  console.log(arr + "sd");
   response.send(arr);
 });
 
