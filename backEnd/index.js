@@ -19,7 +19,6 @@ app.post("/", (request, response) => {
     id: arr.length,
   });
   fs.writeFileSync("db.json", JSON.stringify(arr));
-  console.log(arr);
   response.send(arr);
 });
 
@@ -32,20 +31,13 @@ app.delete("/:id", (request, response) => {
       continue;
     }
   }
-  console.log(arr);
   fs.writeFileSync("db.json", JSON.stringify(arr));
   response.send(arr);
 });
 
 app.put("/", (request, response) => {
   arr = JSON.parse(fs.readFileSync("db.json"));
-  console.log(request.body);
   const newData = request.body;
-  console.log(newData);
-  console.log("newData.id", newData.userId);
-  console.log(newData.age);
-  console.log(arr);
-
   for (let j = 0; j < arr.length; j++) {
     if (newData.userId == arr[j].id) {
       arr[j].datas.name = newData.newName;
@@ -53,8 +45,6 @@ app.put("/", (request, response) => {
       break;
     }
   }
-
-  console.log(arr);
   fs.writeFileSync("db.json", JSON.stringify(arr));
   response.send(arr);
 });

@@ -45,7 +45,6 @@ export default function Home() {
 
   function updateUser() {
     let item = { newName, newAge, userId };
-    console.warn("item", item);
     fetch(`http://localhost:2222/`, {
       method: "PUT",
       headers: {
@@ -55,7 +54,6 @@ export default function Home() {
       body: JSON.stringify(item),
     }).then((result) => {
       result.json().then((resp) => {
-        console.warn(resp);
         setData(resp);
       });
     });
