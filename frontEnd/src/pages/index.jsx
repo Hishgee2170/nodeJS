@@ -1,24 +1,45 @@
 import React, { useEffect, useState } from "react";
 
 export default function Home() {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
+  const API_DATABASE = "http://localhost:2222/";
+  const [information, setInformation] = useState({
+    name: "",
+    age: "",
+  });
+  const [updateInformation, setUpdateInformation] = useState({
+    name: "",
+    age: "",
+    userID: "",
+  });
   const [data, setData] = useState([]);
-  const [userId, setUserId] = useState(null);
-  const [newName, setNewName] = useState("");
-  const [newAge, setNewAge] = useState("");
+
+  const getData = async () => {
+    try {
+      const response = await fetch(`${API_DATABASE}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const newData = await response.json();
+      setData(newData);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const createData = async () => {
-    if (name === "" || age === "") return;
+    if (information.name === "" || information.age === "") return;
 
     try {
-      const response = await fetch("http://localhost:2222/", {
+      const response = await fetch(`${API_DATABASE}`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, age }),
+        body: JSON.stringify(information),
       });
       const newData = await response.json();
       setData(newData);
@@ -29,7 +50,7 @@ export default function Home() {
 
   const deleteData = async (id) => {
     try {
-      const response = await fetch(`http://localhost:2222/${id}`, {
+      const response = await fetch(`${API_DATABASE}${id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -43,38 +64,47 @@ export default function Home() {
     }
   };
 
-  function updateUser() {
-    let item = { newName, newAge, userId };
-    fetch(`http://localhost:2222/`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(item),
-    }).then((result) => {
-      result.json().then((resp) => {
-        setData(resp);
+  const updateUser = async () => {
+    try {
+      const response = await fetch(`${API_DATABASE}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateInformation),
       });
-    });
-  }
+      const newData = await response.json();
+      setData(newData);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const addData = async () => {
     await createData();
-    setName("");
-    setAge("");
+    setInformation({ ...information, name: "", age: "" });
   };
   const sendId = async (id) => {
     await deleteData(id);
   };
 
   function selectUser(id) {
-    let item = data[id];
-    setNewName(item.datas.name);
-    setNewAge(item.datas.age);
-    setUserId(item.id);
-  }
+    data.map((el) => {
+      if (el.id == id) {
+        setUpdateInformation({
+          name: `${el.datas.name}`,
+          age: `${el.datas.age}`,
+          userID: `${el.id}`,
+        });
+      }
+    });
 
+    console.log("update select user", updateInformation);
+  }
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <div className="flex gap-[10px]">
       <div
@@ -83,16 +113,23 @@ export default function Home() {
       >
         <div className="flex justify-center gap-[120px]">
           <input
-            value={name}
+            value={information.name || ""}
             type="text"
-            onChange={(event) => setName(event.target.value)}
+            onChange={(event) =>
+              setInformation({ ...information, name: event.target.value })
+            }
             placeholder="name"
           />
           <div>
             <input
-              value={age}
+              value={information.age || ""}
               type="number"
-              onChange={(event) => setAge(event.target.value)}
+              onChange={(event) =>
+                setInformation({
+                  ...information,
+                  age: parseInt(event.target.value) || "",
+                })
+              }
               placeholder="age"
             />
             <button className="bg-green-200" onClick={addData}>
@@ -153,18 +190,24 @@ export default function Home() {
       <div>
         <input
           type="text"
-          value={newName}
+          value={updateInformation.name}
           onChange={(e) => {
-            setNewName(e.target.value);
+            setUpdateInformation({
+              ...updateInformation,
+              name: `${e.target.value}`,
+            });
           }}
         />
         <br />
         <br />
         <input
           type="number"
-          value={newAge}
+          value={updateInformation.age}
           onChange={(e) => {
-            setNewAge(e.target.value);
+            setUpdateInformation({
+              ...updateInformation,
+              age: parseInt(`${e.target.value}`),
+            });
           }}
         />
         <br />
