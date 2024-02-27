@@ -44,7 +44,6 @@ const Home = () => {
 
   const createData = async () => {
     if (information.name === "" || information.age === "") return;
-
     try {
       const response = await fetch(`${API_DATABASE}`, {
         method: "POST",
@@ -128,7 +127,7 @@ const Home = () => {
     >
       <div className="ml-4">
         <h1 className="text-3xl">USER LIST</h1>
-        <button onClick={toggleDarkMode} className="text-sm mt-2">
+        <button onClick={toggleDarkMode} className="text-sm mt-2 hover:gra">
           {darkMode ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
